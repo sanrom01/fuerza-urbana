@@ -1,0 +1,83 @@
+body {
+background-color: #121212;
+color: #F5F5F5;
+font-family: 'Poppins', sans-serif;
+}
+header{
+    background-color: #111;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.navbar{
+    background-color: #121212 !important;
+    padding: 15px 20px;
+}
+.nav-brand{
+    font-size: 24px;
+    font-weight: bold;
+    color: white !important;
+}
+.navbar-nav .nav-link{
+    color: #c1121f !important;
+    margin-left: 15px;
+    font-size: 16px;
+
+}
+.navbar-nav .nav-link:hover{
+    color: #E63946 !important;
+}
+.hero{
+    background-color: #9B111E;
+    color: white;
+    text-align: center;
+    padding: 10px 20px;
+}
+.hero h1{
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.hero p{
+    font-size: 18px;
+    font-weight: 300;
+}
+.productos h2{
+    color: #ffffff;
+    margin-bottom: 40px;
+    font-size: 32px;
+    font-weight: 600;
+}
+.productos{
+    background-color: #1f1f1f;
+    padding: 40px 20px;
+    text-align: center;
+}
+.grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(2oopx, 1fr));
+    gap: 20px;
+}
+.card{
+    background: #F5F5F5;
+    box-shadow: 0 5px 15px rgba(0, 0,0,0.4);
+    border-radius: 12px;
+    transition: transform 0.3s;
+}
+.card:hover{
+    transform: translateY(-8px);
+}
+.card img{
+    width: 100%;
+    border-radius: 10px;
+}
+.card h5, .card h3{
+    font-weight: 600;
+    font-size: 20px;
+}
+.card p{
+font-size: 14px;
+color: #555;
+}
