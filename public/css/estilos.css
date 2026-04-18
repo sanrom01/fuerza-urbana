@@ -2,9 +2,10 @@ body {
 background-color: #121212;
 color: #F5F5F5;
 font-family: 'Poppins', sans-serif;
+padding-top: 80px;
 }
 header{
-    background-color: #111;
+    background-color: #8B0000;
     color: white;
     padding: 15px 20px;
     display: flex;
@@ -12,16 +13,21 @@ header{
     align-items: center;
 }
 .navbar{
-    background-color: #121212 !important;
+    background-color: #1F1F1F !important;
     padding: 15px 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: top 0.4s;
 }
-.nav-brand{
+.navbar-brand{
     font-size: 24px;
     font-weight: bold;
     color: white !important;
 }
 .navbar-nav .nav-link{
-    color: #c1121f !important;
+    color: #ffffff !important;
     margin-left: 15px;
     font-size: 16px;
 
@@ -30,7 +36,7 @@ header{
     color: #E63946 !important;
 }
 .hero{
-    background-color: #9B111E;
+    background-color: #8B0000;
     color: white;
     text-align: center;
     padding: 10px 20px;
@@ -57,7 +63,7 @@ header{
 }
 .grid{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(2oopx, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
 }
 .card{
@@ -80,4 +86,34 @@ header{
 .card p{
 font-size: 14px;
 color: #555;
+}
+
+.beneficios .col-md-3{
+background-color: #B22222;
+border-radius: 10px;
+padding: 25px;
+margin-top: 20px;
+transition: transform 0.3s;
+}
+.beneficios .col-md-3:hover{
+    transform: translateY(-5px)
+}
+.beneficios{
+    background-color: #1a1a1a;
+    padding: 60px 20px;
+}
+.beneficios h2{
+color: #ffffff;
+font-size: 32px;
+margin-bottom: 40px;
+}
+.footer{
+    background-color: #0D0D0D;
+    color: white;
+    padding: 30px;
+}
+.promo{
+    background-color: #9B111E;;
+    color: white;
+    padding: 60px;
 }
