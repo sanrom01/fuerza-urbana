@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<header>
+    <!-- NAV -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
         <div class="container">
             <a class="navbar-brand fw-bold text-danger" href="/Principal"><img src="/img/logo.png" alt="Fuerza Urbana" height="60"></a>
@@ -28,7 +28,7 @@
             </div>
         </div>
     </nav>
-</header>
+
 
  <section class="hero d-flex align-items-center text-center text-white py-5">
     <div class="container">

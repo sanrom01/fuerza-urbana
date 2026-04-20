@@ -17,8 +17,8 @@ return view('Comercializacion');
 Route::get('/Informacion-de-contacto', function () {
 return view('Informacion-de-contacto');
 });
-Route::get('/Terminos', function () {
-return view('Terminos-y-Uso');
+Route::get('/Terminos-y-usos', function () {
+return view('Terminos-y-usos');
 });
 Route::get('/Catalogo', function () {
 return view('Catalogos-de-productos');

@@ -13,7 +13,7 @@
 
 <body>
 
-<header>
+    <!-- NAV -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-black shadow">
         <div class="container">
             <a class="navbar-brand fw-bold text-danger" href="/Principal"><img src="/img/logo.png" alt="Fuerza Urbana" height="60"></a>
@@ -34,7 +34,7 @@
             </div>
         </div>
     </nav>
-</header>
+
 
 <main>
 
@@ -199,7 +199,7 @@
 </main>
 
 <footer class="footer bg-black text-center text-light py-4">
-    <p class="mb-1">© Fuerza Urbana</p>
+    <p class="mb-1">@Fuerza Urbana</p>
     <p class="text-secondary">Instagram | WhatsApp | Contacto</p>
 </footer>
 

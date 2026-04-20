@@ -242,3 +242,38 @@ margin-bottom: 40px;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.4);
 }
+
+/*Terminos y Usos*/
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* HERO LIMPIO */
+.hero-legal {
+    height: 35vh;
+    background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)),
+                url('../img/legal.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+/* BLOQUES LEGALES */
+.legal-block {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.legal-block h4 {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* LISTAS */
+ul {
+    padding-left: 18px;
+}
+
+ul li {
+    margin-bottom: 6px;
+    color: #ccc;
+}
