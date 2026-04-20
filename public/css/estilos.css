@@ -218,3 +218,27 @@ margin-bottom: 40px;
     left: -10px;
 }
 
+/* FORM */
+.form-control {
+    background-color: #1a1a1a;
+    border: none;
+    color: white;
+}
+
+.form-control:focus {
+    background-color: #1a1a1a;
+    color: white;
+    box-shadow: 0 0 5px #ff3b3b;
+}
+
+/* BOTON */
+.btn-danger {
+    border-radius: 30px;
+    padding: 10px;
+}
+
+/*MAPA*/
+.mapa iframe {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
