@@ -14,7 +14,7 @@ return view('Quienes-somos');
 Route::get('/Comercializacion', function () {
 return view('Comercializacion');
 });
-Route::get('/Contacto', function () {
+Route::get('/Informacion-de-contacto', function () {
 return view('Informacion-de-contacto');
 });
 Route::get('/Terminos', function () {
