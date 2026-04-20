@@ -9,7 +9,7 @@ Route::get('/Principal', function () {
 return view('Principal');
 });
 Route::get('/Quienes-somos', function () {
-return view('Qienes-somos');
+return view('Quienes-somos');
 });
 Route::get('/Comercializacion', function () {
 return view('Comercializacion');
