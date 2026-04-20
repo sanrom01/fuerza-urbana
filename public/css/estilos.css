@@ -16,7 +16,9 @@ header{
 p {
     line-height: 1.8;
 }
-
+section{
+    padding: 60px 0;
+}
 
 /* NAV */
 .navbar{
@@ -244,9 +246,7 @@ margin-bottom: 40px;
 }
 
 /*Terminos y Usos*/
-body {
-    font-family: 'Poppins', sans-serif;
-}
+
 
 /* HERO LIMPIO */
 .hero-legal {
@@ -271,9 +271,22 @@ body {
 /* LISTAS */
 ul {
     padding-left: 18px;
+    list-style: none;
 }
 
 ul li {
     margin-bottom: 6px;
     color: #ccc;
+}
+/* ICONO PAGO*/
+.icono-pago{
+    width: 120px;
+    margin-bottom: 10px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    transition: transform 0.3s
+}
+.icono-pago:hover{
+transform: scale(1.15);
 }
