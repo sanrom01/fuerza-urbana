@@ -20,7 +20,7 @@ return view('Informacion-de-contacto');
 Route::get('/Terminos-y-usos', function () {
 return view('Terminos-y-usos');
 });
-Route::get('/Catalogo', function () {
+Route::get('/Catalogos-de-productos', function () {
 return view('Catalogos-de-productos');
 });
 Route::post('/contacto', [ContactoController::class, 'procesar']); 

@@ -35,8 +35,6 @@
         </div>
     </nav>
 
-<main>
-
 <!-- HERO -->
 <section class="hero-legal text-center text-white d-flex align-items-center">
     <div class="container">
