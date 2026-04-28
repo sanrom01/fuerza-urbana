@@ -31,7 +31,7 @@
             </div>
         </div>
     </nav>
-<!-- Carrusel -->
+    <!-- Carrusel -->
     <div id="carouselExampleCaptions" class="carousel slide">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
@@ -75,7 +75,7 @@
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-<!-- CARD -->
+    <!-- CARD -->
     <section class="productos-pricipal py-5">
         <div class="container">
             <h2 class="text-center mb-5 text-white text-uppercase fw-bold">Productos Destacados</h2>
@@ -178,17 +178,17 @@
         <h2>20% OFF en indumentaria deportiva</h2>
         <p>Solo por tiempo limitado</p>
         <a class="btn btn-outline-light"
-        href="/Catalogos-de-productos">Ver Productos</a>
-        
+            href="/Catalogos-de-productos">Ver Productos</a>
+
 
     </section>
 
     <!-- FOOTER -->
-<footer class="footer bg-black text-center text-light py-4 border-top border-danger">
-    <p class="mb-1">@Fuerza Urbana</p>
-    <p class="text-secondary">Instagram | WhatsApp | Contacto</p>
-    <p class="mb-0">© Fuerza Urbana — Todos los derechos reservados</p>
-</footer>
+    <footer class="footer bg-black text-center text-light py-4 border-top border-danger">
+        <p class="mb-1">@Fuerza Urbana</p>
+        <p class="text-secondary">Instagram | WhatsApp | Contacto</p>
+        <p class="mb-0">© Fuerza Urbana — Todos los derechos reservados</p>
+    </footer>
     <script>
         // Guarda la posición anterior del scroll
         let lastScroll = 0;
@@ -197,7 +197,7 @@
         const navbar = document.querySelector(".navbar");
 
         // Detecta cuando el usuario hace scroll
-        window.addEventListener("scroll", function () {
+        window.addEventListener("scroll", function() {
 
             let currentScroll = window.pageYOffset;
 
