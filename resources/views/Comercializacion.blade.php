@@ -23,7 +23,7 @@
                     <a class="nav-link" href="/Comercializacion">Comercialización</a>
                     <a class="nav-link" href="/Informacion-de-contacto">Contacto</a>
                     <a class="nav-link" href="/Terminos-y-usos">Términos</a>
-                    <a class="nav-link btn btn-danger ms-3 px-3" href="/Catalogos-de-productos">Catálogo</a>
+                    <a class="nav-link" href="/Catalogos-de-productos">Catálogo</a>
                 </div>
             </div>
         </div>
