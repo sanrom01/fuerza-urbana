@@ -105,10 +105,13 @@
 </section>
 
 
-    <footer class= "footer text-center">
-    <p>@FuerzaUrbana</p>
-    <p>Instragram| Whatsapp| Contacto</p>
+    <!-- FOOTER -->
+<footer class="footer bg-black text-center text-light py-4 border-top border-danger">
+    <p class="mb-1">@Fuerza Urbana</p>
+    <p class="text-secondary">Instagram | WhatsApp | Contacto</p>
+    <p class="mb-0">© Fuerza Urbana — Todos los derechos reservados</p>
 </footer>
+<!-- Ocular el navbar-->
 <script>
 // Guarda la posición anterior del scroll
 let lastScroll = 0;
@@ -134,7 +137,8 @@ navbar.style.top = "0";
 lastScroll = currentScroll;
 
 });
-</script>
+    </script>
+
 <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 

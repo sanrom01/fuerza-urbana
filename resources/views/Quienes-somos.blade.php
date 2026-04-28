@@ -198,10 +198,40 @@
 
 </main>
 
-<footer class="footer bg-black text-center text-light py-4">
+<!-- FOOTER -->
+<footer class="footer bg-black text-center text-light py-4 border-top border-danger">
     <p class="mb-1">@Fuerza Urbana</p>
     <p class="text-secondary">Instagram | WhatsApp | Contacto</p>
+    <p class="mb-0">© Fuerza Urbana — Todos los derechos reservados</p>
 </footer>
+
+<!-- Ocular el navbar-->
+<script>
+// Guarda la posición anterior del scroll
+let lastScroll = 0;
+
+// Selecciona el navbar
+const navbar = document.querySelector(".navbar");
+
+// Detecta cuando el usuario hace scroll
+window.addEventListener("scroll", function() {
+
+let currentScroll = window.pageYOffset;
+
+// Si el usuario baja, ocultar navbar
+if (currentScroll > lastScroll) {
+navbar.style.top = "-80px";
+}
+// Si sube, mostrar navbar
+else {
+navbar.style.top = "0";
+}
+
+// Actualiza la posición del scroll
+lastScroll = currentScroll;
+
+});
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>

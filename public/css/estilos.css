@@ -17,10 +17,12 @@ p {
     line-height: 1.8;
 }
 
+
 /* NAV */
 .navbar{
-    background-color: #1F1F1F !important;
-    padding: 15px 20px;
+    background: rgba(15, 15, 15, 0.85) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     position: fixed;
     top: 0;
     width: 100%;
@@ -43,9 +45,12 @@ p {
     color: #E63946 !important;
 }
 
-/* BOTONES */
-.btn-danger {
-    border-radius: 30px;
+/* FOOTER */
+.footer{
+    background-color: #0D0D0D;
+    border-top: 1px solid #222;
+    color: white;
+    padding: 30px;
 }
 
 /* HERO */
@@ -72,25 +77,296 @@ p {
 }
 
 
+/*PRINCIPAL*/
+/* carrusel principal*/
+.carousel-item img{
+    min-height: 400px;
+    object-fit: cover;
+}
+.carousel-caption {
+    
+    color: white;
+    background: rgba(0,0,0,0.5);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+/* Banner Principal */
+.banner-card {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 450px; 
+    overflow: hidden;
+    text-decoration: none; 
+    transition: all 0.5s ease;
+}
+
+.banner-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1); 
+    filter: brightness(0.9);
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.8) 100%);
+    display: flex;
+    justify-content: center; 
+    align-items: flex-end; 
+    padding-bottom: 40px; 
+    transition: background 0.5s ease;
+}
+
+.banner-content {
+    width: 90%;
+}
+
+.banner-title {
+    color: #ffffff;
+    font-size: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); 
+}
+
+
+.btn-banner {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 10px 35px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 4px; /* Un poco redondeado, pero profesional */
+    transition: all 0.3s ease;
+    border: 2px solid #ffffff;
+}
+.banner-card:hover img {
+    transform: scale(1.1); 
+    filter: brightness(0.7);
+}
+
+.banner-card:hover .banner-overlay {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.9) 100%);
+}
+
+.btn-banner:hover {
+    background-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.letter-spacing-2 {
+    letter-spacing: 2px;
+}
 
 /* PRODUCTOS */
-.productos h2{
+.productos-pricipal h2{
     color: #ffffff;
     margin-bottom: 40px;
-    font-size: 32px;
+    font-size: 36px;
     font-weight: 600;
+    letter-spacing: 2px;
 }
-.productos{
+.productos-pricipal{
     background-color: #1f1f1f;
-    padding: 40px 20px;
+    padding: 80px 20px;
     text-align: center;
-}
-.grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    
 }
 
+/* testimonios */
+.testimonios p {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+.testimonios .col-md-4 div {
+    background: #1a1a1a;
+    transition: 0.3s;
+}
+
+.testimonios .col-md-4 div:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+/*Beneficios */
+.beneficios .col-md-3{
+background: linear-gradient(135deg, #8B0000, #E63946);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+border-radius: 10px;
+padding: 25px;
+margin-top: 20px;
+transition: transform 0.3s;
+}
+.beneficios .col-md-3:hover{
+    transform: translateY(-5px)
+}
+.beneficios{
+    background-color: #1a1a1a;
+    padding: 60px 20px;
+}
+.beneficios h2{
+color: #ffffff;
+font-size: 32px;
+margin-bottom: 40px;
+}
+
+/* Promo */
+.promo{
+    background: linear-gradient(135deg, #9B111E, #E63946);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 60px;
+}
+
+
+
+/*QUIENES SOMOS*/
+/* TIMELINE */
+.timeline {
+    position: relative;
+    margin: 0 auto;
+    padding: 20px 0;
+    width: 80%;
+}
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    background: #ff3b3b;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -2px;
+}
+
+.timeline-item {
+    padding: 20px;
+    position: relative;
+    width: 50%;
+}
+
+.timeline-item:nth-child(odd) {
+    left: 0;
+}
+
+.timeline-item:nth-child(even) {
+    left: 50%;
+}
+
+.timeline-content {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.timeline-content h4 {
+    color: #ff3b3b;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    background: #ff3b3b;
+    border-radius: 50%;
+}
+
+.timeline-item:nth-child(even)::before {
+    left: -10px;
+}
+
+
+
+/*CONTACTO*/
+/* FORM */
+.form-control {
+    background-color: #1a1a1a;
+    border: none;
+    color: white;
+}
+
+.form-control:focus {
+    background-color: #1a1a1a;
+    color: white;
+    box-shadow: 0 0 5px #ff3b3b;
+}
+
+/* BOTON */
+.btn-danger {
+    border-radius: 30px;
+    padding: 10px;
+}
+
+/*MAPA*/
+.mapa iframe {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+/*TERMINOS Y USOS*/
+/* HERO LIMPIO */
+.hero-legal {
+    height: 35vh;
+    background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)),
+                url('../img/legal.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+/* BLOQUES LEGALES */
+.legal-block {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.legal-block h4 {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* LISTAS */
+ul {
+    padding-left: 18px;
+    list-style: none;
+}
+
+ul li {
+    margin-bottom: 6px;
+    color: #ccc;
+}
+/* ICONO PAGO*/
+.icono-pago{
+    width: 120px;
+    margin-bottom: 10px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    transition: transform 0.3s
+}
+.icono-pago:hover{
+transform: scale(1.15);
+}
+
+
+
+/*CATALOGO DE PRODUCTOS*/
+/*Productos*/
 .producto {
     background: #1a1a1a;
     border-radius: 15px;
@@ -121,7 +397,7 @@ p {
     gap: 25px;
 }
 
-/* PRECIO */
+/* Precio productos */
 .precio {
     font-size: 20px;
     font-weight: 700;
@@ -181,172 +457,7 @@ font-size: 14px;
 color: #555;
 }
 
-
-.beneficios .col-md-3{
-background-color: #B22222;
-border-radius: 10px;
-padding: 25px;
-margin-top: 20px;
-transition: transform 0.3s;
-}
-.beneficios .col-md-3:hover{
-    transform: translateY(-5px)
-}
-.beneficios{
-    background-color: #1a1a1a;
-    padding: 60px 20px;
-}
-.beneficios h2{
-color: #ffffff;
-font-size: 32px;
-margin-bottom: 40px;
-}
-
-/* FOOTER */
-.footer{
-    background-color: #0D0D0D;
-    border-top: 1px solid #222;
-    color: white;
-    padding: 30px;
-}
-.promo{
-    background-color: #9B111E;;
-    color: white;
-    padding: 60px;
-}
-
-
-/* TIMELINE */
-.timeline {
-    position: relative;
-    margin: 0 auto;
-    padding: 20px 0;
-    width: 80%;
-}
-
-.timeline::after {
-    content: '';
-    position: absolute;
-    width: 4px;
-    background: #ff3b3b;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    margin-left: -2px;
-}
-
-.timeline-item {
-    padding: 20px;
-    position: relative;
-    width: 50%;
-}
-
-.timeline-item:nth-child(odd) {
-    left: 0;
-}
-
-.timeline-item:nth-child(even) {
-    left: 50%;
-}
-
-.timeline-content {
-    background: #1a1a1a;
-    padding: 20px;
-    border-radius: 10px;
-    position: relative;
-}
-
-.timeline-content h4 {
-    color: #ff3b3b;
-}
-
-/* PUNTOS */
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    top: 25px;
-    right: -10px;
-    width: 20px;
-    height: 20px;
-    background: #ff3b3b;
-    border-radius: 50%;
-}
-
-.timeline-item:nth-child(even)::before {
-    left: -10px;
-}
-
-/* FORM */
-.form-control {
-    background-color: #1a1a1a;
-    border: none;
-    color: white;
-}
-
-.form-control:focus {
-    background-color: #1a1a1a;
-    color: white;
-    box-shadow: 0 0 5px #ff3b3b;
-}
-
-/* BOTON */
-.btn-danger {
-    border-radius: 30px;
-    padding: 10px;
-}
-
-/*MAPA*/
-.mapa iframe {
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
-}
-
-/*Terminos y Usos*/
-
-
-/* HERO LIMPIO */
-.hero-legal {
-    height: 35vh;
-    background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)),
-                url('../img/legal.jpg');
-    background-size: cover;
-    background-position: center;
-}
-
-/* BLOQUES LEGALES */
-.legal-block {
-    padding: 20px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
-.legal-block h4 {
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-/* LISTAS */
-ul {
-    padding-left: 18px;
-    list-style: none;
-}
-
-ul li {
-    margin-bottom: 6px;
-    color: #ccc;
-}
-/* ICONO PAGO*/
-.icono-pago{
-    width: 120px;
-    margin-bottom: 10px;
-    background-color: white;
-    padding: 10px;
-    border-radius: 10px;
-    transition: transform 0.3s
-}
-.icono-pago:hover{
-transform: scale(1.15);
-}
-
+/* Filtros Catalogo */
 .filtros {
     background: #1a1a1a;
     padding: 20px;
@@ -376,118 +487,3 @@ transform: scale(1.15);
 .blanco { background: white; border: 1px solid #ccc; }
 .rojo { background: red; }
 .azul { background: blue; }
-
-.producto img{
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-}
-.precio{
-    color:#E63946;
-    font-weight: 700px;
-    font-size: 18px;
-}
-.carousel-item img{
-    height: 700px;
-    object-fit: cover;
-    width: 100%;
-    image-rendering: auto;
-}
-.carousel-caption {
-    
-    color: black;
-    border-radius: 12px;
-    padding: 15px;
-}
-.banner-card {
-    display: block;
-    position: relative;
-    width: 100%;
-    height: 450px; /* Ajusta la altura a tu gusto (ej: 50vh, 400px) */
-    overflow: hidden;
-    text-decoration: none; /* Quita el subrayado del link */
-    transition: all 0.5s ease;
-}
-
-/* Imagen de fondo de la card */
-.banner-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Importante para que no se deforme */
-    transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1); /* Zoom suave */
-    filter: brightness(0.9); /* Un poco más oscura por defecto */
-}
-
-/* Capa oscura superpuesta para que se lea el texto */
-.banner-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.8) 100%);
-    display: flex;
-    justify-content: center; /* Centrado horizontal */
-    align-items: flex-end; /* Alinear contenido abajo */
-    padding-bottom: 40px; /* Espacio desde abajo */
-    transition: background 0.5s ease;
-}
-
-/* Contenedor del texto y botón */
-.banner-content {
-    width: 90%;
-}
-
-/* Título de la card (Remeras Urbanas, etc.) */
-.banner-title {
-    color: #ffffff;
-    font-size: 20px;
-    letter-spacing: 2px;
-    margin-bottom: 15px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Sombra para legibilidad */
-}
-
-/* Botón estilo blanco (Tipo referencia) */
-.btn-banner {
-    display: inline-block;
-    background-color: #ffffff;
-    color: #000000;
-    padding: 10px 35px;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border-radius: 4px; /* Un poco redondeado, pero profesional */
-    transition: all 0.3s ease;
-    border: 2px solid #ffffff;
-}
-
-/* =========================================
-   EFECTOS HOVER (Interactividad)
-   ========================================= */
-
-/* Efectos al pasar el mouse por la card */
-.banner-card:hover img {
-    transform: scale(1.1); /* Efecto zoom de la imagen */
-    filter: brightness(0.7); /* Se oscurece un poco más */
-}
-
-.banner-card:hover .banner-overlay {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.9) 100%);
-}
-
-/* Efectos al pasar el mouse específicamente por el botón */
-.btn-banner:hover {
-    background-color: transparent; /* Fondo transparente */
-    color: #ffffff; /* Texto blanco */
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Brillo blanco */
-}
-
-/* Utilidad para espaciado de letras en títulos */
-.letter-spacing-2 {
-    letter-spacing: 2px;
-}
-.testimonios p {
-    font-size: 0.9rem;
-    color: #ccc;
-}

@@ -32,12 +32,6 @@
         </div>
     </nav>
 <!-- Carrusel -->
-    <section class="carousel-caption d-none d-md-block text-dark">
-        <div class="container">
-            <h1 class="display-4">La Mejor Calidad</h1>
-            <p class="lead">Con los mejores precios</p>
-        </div>
-    </section>
     <div id="carouselExampleCaptions" class="carousel slide">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
@@ -51,22 +45,22 @@
             <div class="carousel-item active">
                 <img src="img/principal/foto1.jpg" class="d-block w-100" alt="Slide 1">
                 <div class="carousel-caption d-none d-md-block">
-                    <h5>Dominá cada paso</h5>
-                    <p>Preparadas para cualquier desafío.</p>
+                    <h5 class="fw-bold display-6">Dominá cada paso</h5>
+                    <p class="lead">Preparadas para cualquier desafío.</p>
                 </div>
             </div>
             <div class="carousel-item">
                 <img src="img/principal/foto2.jpg" class="d-block w-100" alt="Slide 2">
                 <div class="carousel-caption d-none d-md-block">
-                    <h5>Jugá sin límites</h5>
-                    <p>Precisión, agarre y potencia en cada jugada.</p>
+                    <h5 class="fw-bold display-6">Jugá sin límites</h5>
+                    <p class="lead">Precisión, agarre y potencia en cada jugada.</p>
                 </div>
             </div>
             <div class="carousel-item">
                 <img src="img/principal/foto3.jpg" class="d-block w-100" alt="Slide 2">
                 <div class="carousel-caption d-none d-md-block">
-                    <h5>Estilo urbano deportivo</h5>
-                    <p>Ideal para entrenar o salir con estilo.</p>
+                    <h5 class="fw-bold display-6">Estilo urbano deportivo</h5>
+                    <p class="lead">Ideal para entrenar o salir con estilo.</p>
                 </div>
             </div>
         </div>
@@ -82,7 +76,7 @@
         </button>
     </div>
 <!-- CARD -->
-    <section class="productos py-5">
+    <section class="productos-pricipal py-5">
         <div class="container">
             <h2 class="text-center mb-5 text-white text-uppercase fw-bold">Productos Destacados</h2>
 
@@ -183,13 +177,18 @@
     <section class="promo text-center">
         <h2>20% OFF en indumentaria deportiva</h2>
         <p>Solo por tiempo limitado</p>
+        <a class="btn btn-outline-light"
+        href="/Catalogos-de-productos">Ver Productos</a>
+        
 
     </section>
 
-    <footer class="footer text-center">
-        <p>@FuerzaUrbana</p>
-        <p>Instragram| Whatsapp| Contacto</p>
-    </footer>
+    <!-- FOOTER -->
+<footer class="footer bg-black text-center text-light py-4 border-top border-danger">
+    <p class="mb-1">@Fuerza Urbana</p>
+    <p class="text-secondary">Instagram | WhatsApp | Contacto</p>
+    <p class="mb-0">© Fuerza Urbana — Todos los derechos reservados</p>
+</footer>
     <script>
         // Guarda la posición anterior del scroll
         let lastScroll = 0;
