@@ -17,6 +17,14 @@
                     <a class="nav-link" href="/Catalogos-de-productos">Catálogo</a>
                 </div>
             </div>
+            <a href="/Login" class="btn btn-outline-danger rounded-pill fw-bold" style="padding: 4px 15px; font-size: 12px; letter-spacing: 0.5px; line-height: 1.2;">
+    LOGIN
+</a>
+
+<a href="/Register" class="btn btn-light rounded-pill fw-bold text-black ms-2" style="padding: 4px 15px; font-size: 12px; letter-spacing: 0.5px; line-height: 1.2;">
+    REGISTER
+</a>
+</div>
         </div>
     </nav>
     <script>

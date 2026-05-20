@@ -487,3 +487,28 @@ color: #555;
 .blanco { background: white; border: 1px solid #ccc; }
 .rojo { background: red; }
 .azul { background: blue; }
+/* login*/
+.btn-outline-danger {
+    border-width: 2px;
+    letter-spacing: 0.5px;
+    padding-left: 20px !important;  /* Le da aire a los costados */
+    padding-right: 20px !important; /* Le da aire a los costados */
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    background-color: #E63946;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(230, 57, 70, 0.4);
+}
+
+/* El menú desplegable del usuario logeado */
+.dropdown-menu-dark {
+    background-color: #1a1a1a !important;
+    border: 1px solid #333 !important;
+}
+
+.dropdown-item:hover {
+    background-color: #E63946 !important;
+    color: white !important;
+}

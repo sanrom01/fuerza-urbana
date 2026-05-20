@@ -23,4 +23,6 @@ return view('Terminos-y-usos');
 Route::get('/Catalogos-de-productos', function () {
 return view('Catalogos-de-productos');
 });
+Route::view('/Login', 'Login')->name('login');
+Route::view('/Register', 'register')->name('register');
 Route::post('/contacto', [ContactoController::class, 'procesar']); 
