@@ -26,3 +26,9 @@ return view('Catalogos-de-productos');
 Route::view('/Login', 'Login')->name('login');
 Route::view('/Register', 'register')->name('register');
 Route::post('/contacto', [ContactoController::class, 'procesar']); 
+
+use App\Http\Controllers\UsuarioController;
+
+Route::post('/registro',
+    [UsuarioController::class,'guardar'])
+    ->name('registro.guardar');

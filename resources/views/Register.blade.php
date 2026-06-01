@@ -11,7 +11,7 @@
                 <p class="text-secondary small">Creá tu cuenta en segundos</p>
             </div>
 
-            <form >
+            <<form action="{{ route('registro.guardar') }}" method="POST">
                 @csrf <div class="mb-3">
                     <label for="name" class="form-label fw-bold text-uppercase small" style="letter-spacing: 1px;">Nombre Completo</label>
                     <input type="text" name="name" id="name" class="form-control form-control-lg bg-black text-white border-secondary rounded-3" placeholder="Juan Pérez" required autofocus>

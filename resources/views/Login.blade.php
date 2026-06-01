@@ -32,7 +32,7 @@
                 </button>
 
                 <div class="text-center">
-                    <p class="text-secondary small mb-0">¿No tenés cuenta? <a href="/register" class="text-danger fw-bold text-decoration-none">Registrate acá</a></p>
+                    <p class="text-secondary small mb-0">¿No tenés cuenta? <a href="/Register" class="text-danger fw-bold text-decoration-none">Registrate acá</a></p>
                 </div>
             </form>
         </div>
