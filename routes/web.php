@@ -27,6 +27,13 @@ Route::view('/Login', 'Login')->name('login');
 Route::view('/Register', 'register')->name('register');
 Route::post('/contacto', [ContactoController::class, 'procesar']); 
 
+Route::get('/Carrito', function () {
+    return view('carrito');
+})->name('carrito');
+
+Route::get('/Mis-compras', function () {
+    return view('mis-compras');
+})->name('mis-compras');
 use App\Http\Controllers\UsuarioController;
 
 Route::post('/registro',
