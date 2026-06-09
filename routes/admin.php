@@ -9,16 +9,8 @@ use App\Http\Controllers\Admin\{
     ConsultaController,
     VentaController,
     FacturaController,
+    ReporteController,
 };
-
-// ──────────────────────────────────────────────────────────────
-//  PANEL DE ADMINISTRACIÓN
-//  Middleware: auth (usuario autenticado) + admin (rol admin)
-//  Agregar en bootstrap/app.php:
-//    ->withMiddleware(function (Middleware $middleware) {
-//        $middleware->alias(['admin' => \App\Http\Middleware\AdminMiddleware::class]);
-//    })
-// ──────────────────────────────────────────────────────────────
 
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
@@ -37,12 +29,12 @@ Route::middleware(['auth', 'admin'])
         Route::resource('categorias', CategoriaController::class);
 
         // Usuarios
-        Route::get('usuarios',                       [UsuarioController::class, 'index'])->name('usuarios.index');
-        Route::get('usuarios/{usuario}',             [UsuarioController::class, 'show'])->name('usuarios.show');
-        Route::get('usuarios/{usuario}/editar',      [UsuarioController::class, 'edit'])->name('usuarios.edit');
-        Route::put('usuarios/{usuario}',             [UsuarioController::class, 'update'])->name('usuarios.update');
-        Route::delete('usuarios/{usuario}/desactivar', [UsuarioController::class, 'desactivar'])->name('usuarios.desactivar');
-        Route::post('usuarios/{id}/restaurar',       [UsuarioController::class, 'restore'])->name('usuarios.restore');
+        Route::get('usuarios',                           [UsuarioController::class, 'index'])->name('usuarios.index');
+        Route::get('usuarios/{usuario}',                 [UsuarioController::class, 'show'])->name('usuarios.show');
+        Route::get('usuarios/{usuario}/editar',          [UsuarioController::class, 'edit'])->name('usuarios.edit');
+        Route::put('usuarios/{usuario}',                 [UsuarioController::class, 'update'])->name('usuarios.update');
+        Route::delete('usuarios/{usuario}/desactivar',   [UsuarioController::class, 'desactivar'])->name('usuarios.desactivar');
+        Route::post('usuarios/{id}/restaurar',           [UsuarioController::class, 'restore'])->name('usuarios.restore');
 
         // Consultas
         Route::get('consultas',                          [ConsultaController::class, 'index'])->name('consultas.index');
@@ -61,5 +53,5 @@ Route::middleware(['auth', 'admin'])
         Route::get('facturacion/{factura}/pdf',          [FacturaController::class, 'descargarPdf'])->name('facturacion.pdf');
 
         // Reportes
-        // Route temporarily removed until ReporteController is available.
+        Route::get('reportes', [ReporteController::class, 'index'])->name('reportes.index');
     });
