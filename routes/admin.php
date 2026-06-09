@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\{
     ConsultaController,
     VentaController,
     FacturaController,
-    ReporteController,
 };
 
 // ──────────────────────────────────────────────────────────────
@@ -62,5 +61,5 @@ Route::middleware(['auth', 'admin'])
         Route::get('facturacion/{factura}/pdf',          [FacturaController::class, 'descargarPdf'])->name('facturacion.pdf');
 
         // Reportes
-        Route::get('reportes', [ReporteController::class, 'index'])->name('reportes.index');
+        // Route temporarily removed until ReporteController is available.
     });

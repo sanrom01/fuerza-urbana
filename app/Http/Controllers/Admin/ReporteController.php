@@ -1,38 +1,55 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
-use App\Models\Consulta;
-use Illuminate\Http\Request;
+use App\Models\{Order, Product, User, OrderItem};
+use Illuminate\Support\Facades\DB;
 
-class ConsultaController extends Controller
+class ReporteController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Consulta::with('user');
-        if ($request->estado) $query->where('estado', $request->estado);
-        $consultas = $query->latest()->paginate(20)->withQueryString();
-        return view('admin.consultas.index', compact('consultas'));
-    }
+        // Ventas por mes (últimos 12 meses)
+        $ventasPorMes = Order::select(
+                DB::raw("DATE_FORMAT(created_at,'%Y-%m') as mes"),
+                DB::raw('COUNT(*) as ordenes'),
+                DB::raw('SUM(total) as monto')
+            )
+            ->where('status', '!=', 'cancelado')
+            ->where('created_at', '>=', now()->subMonths(12))
+            ->groupBy('mes')->orderBy('mes')->get();
 
-    public function show(Consulta $consulta)
-    {
-        return view('admin.consultas.show', compact('consulta'));
-    }
+        // Productos más vendidos (top 10)
+        $masVendidos = OrderItem::select('product_id',
+                DB::raw('SUM(quantity) as unidades'),
+                DB::raw('SUM(subtotal) as facturado')
+            )
+            ->with('product')
+            ->whereHas('order', fn($q) => $q->where('status', '!=', 'cancelado'))
+            ->groupBy('product_id')
+            ->orderByDesc('unidades')
+            ->take(10)->get();
 
-    public function responder(Request $request, Consulta $consulta)
-    {
-        $request->validate(['respuesta' => 'required|string']);
-        $consulta->update([
-            'estado'         => 'respondida',
-            'respuesta'      => $request->respuesta,
-            'respondida_at'  => now(),
-        ]);
-        return back()->with('success', 'Consulta marcada como respondida.');
-    }
+        // Clientes con más compras (top 10)
+        $mejoresClientes = Order::select('user_id',
+                DB::raw('COUNT(*) as ordenes'),
+                DB::raw('SUM(total) as total_gastado')
+            )
+            ->with('user')
+            ->where('status', '!=', 'cancelado')
+            ->groupBy('user_id')
+            ->orderByDesc('total_gastado')
+            ->take(10)->get();
 
-    public function destroy(Consulta $consulta)
-    {
-        $consulta->delete();
-        return back()->with('success', 'Consulta eliminada.');
+        // Productos sin stock
+        $sinStock = Product::with('category')
+            ->where('stock', 0)
+            ->whereNull('deleted_at')
+            ->get();
+
+        return view('admin.reportes.index', compact(
+            'ventasPorMes', 'masVendidos', 'mejoresClientes', 'sinStock'
+        ));
     }
 }
