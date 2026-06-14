@@ -15,10 +15,10 @@
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="img/principal/foto1.jpg" class="d-block w-100" alt="Slide 1">
+                <img src="img/principal/foto4.jpg" class="d-block w-100" alt="Slide 1">
                 <div class="carousel-caption d-none d-md-block">
-                    <h5 class="fw-bold display-6">Dominá cada paso</h5>
-                    <p class="lead">Preparadas para cualquier desafío.</p>
+                    <h5 class="fw-bold display-6">Estilo urbano deportivo</h5>
+                    <p class="lead">Ideal para entrenar o salir con estilo.</p>
                 </div>
             </div>
             <div class="carousel-item">
@@ -29,10 +29,10 @@
                 </div>
             </div>
             <div class="carousel-item">
-                <img src="img/principal/foto3.jpg" class="d-block w-100" alt="Slide 2">
+                <img src="img/principal/foto1.jpg" class="d-block w-100" alt="Slide 2">
                 <div class="carousel-caption d-none d-md-block">
-                    <h5 class="fw-bold display-6">Estilo urbano deportivo</h5>
-                    <p class="lead">Ideal para entrenar o salir con estilo.</p>
+                    <h5 class="fw-bold display-6">Dominá cada paso</h5>
+                    <p class="lead">Preparadas para cualquier desafío.</p>
                 </div>
             </div>
         </div>

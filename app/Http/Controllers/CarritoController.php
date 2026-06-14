@@ -7,67 +7,67 @@ use Illuminate\Http\Request;
 
 class CarritoController extends Controller
 {
-    // Ver carrito
     public function index()
     {
         $carrito  = session('carrito', []);
         $subtotal = collect($carrito)->sum(fn($i) => $i['precio'] * $i['cantidad']);
-        return view('shop.carrito', compact('carrito', 'subtotal'));
+        return view('Carrito', compact('carrito', 'subtotal'));
     }
 
-    // Agregar producto al carrito
     public function agregar(Request $request, $id)
     {
-        $producto = Product::findOrFail($id);
+        $producto = Product::with('images')->findOrFail($id);
         $cantidad = max(1, (int) $request->cantidad);
+        $talle    = $request->talle ?? 'Único';
         $carrito  = session('carrito', []);
 
-        if (isset($carrito[$id])) {
-            $carrito[$id]['cantidad'] += $cantidad;
+        $key = $id . '_' . $talle;
+
+        if (isset($carrito[$key])) {
+            $carrito[$key]['cantidad'] += $cantidad;
         } else {
-            $carrito[$id] = [
-                'nombre'   => $producto->name,
-                'precio'   => $producto->sale_price ?? $producto->price,
-                'cantidad' => $cantidad,
-                'imagen'   => $producto->images->where('is_main', true)->first()?->url
-                              ?? 'https://picsum.photos/seed/'.$id.'/200/200',
-                'sku'      => $producto->sku,
+            $carrito[$key] = [
+                'producto_id' => (int) $id,
+                'nombre'      => $producto->name,
+                'precio'      => (float) ($producto->sale_price ?? $producto->price),
+                'cantidad'    => $cantidad,
+                'talle'       => $talle,
+                'imagen'      => $producto->images->where('is_main', true)->first()?->url ?? '',
+                'sku'         => $producto->sku ?? '',
             ];
         }
 
         session(['carrito' => $carrito]);
 
         return response()->json([
-            'mensaje'  => 'Producto agregado al carrito.',
+            'ok'       => true,
+            'mensaje'  => 'Producto agregado.',
             'cantidad' => count($carrito),
         ]);
     }
 
-    // Actualizar cantidad
-    public function actualizar(Request $request, $id)
+    public function actualizar(Request $request, $key)
     {
         $carrito = session('carrito', []);
-        if (isset($carrito[$id])) {
+        if (isset($carrito[$key])) {
             if ($request->accion === 'sumar') {
-                $carrito[$id]['cantidad']++;
-            } elseif ($request->accion === 'restar' && $carrito[$id]['cantidad'] > 1) {
-                $carrito[$id]['cantidad']--;
+                $carrito[$key]['cantidad']++;
+            } elseif ($request->accion === 'restar' && $carrito[$key]['cantidad'] > 1) {
+                $carrito[$key]['cantidad']--;
             }
+            session(['carrito' => $carrito]);
         }
-        session(['carrito' => $carrito]);
         return back();
     }
 
-    // Eliminar un item
-    public function eliminar($id)
+    public function eliminar($key)
     {
         $carrito = session('carrito', []);
-        unset($carrito[$id]);
+        unset($carrito[$key]);
         session(['carrito' => $carrito]);
         return back()->with('success', 'Producto eliminado del carrito.');
     }
 
-    // Vaciar carrito
     public function vaciar()
     {
         session()->forget('carrito');

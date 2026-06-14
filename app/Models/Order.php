@@ -43,4 +43,10 @@ class Order extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
+    // ← Esta relación faltaba y causaba el error 500
+    public function factura()
+    {
+        return $this->hasOne(Factura::class);
+    }
 }

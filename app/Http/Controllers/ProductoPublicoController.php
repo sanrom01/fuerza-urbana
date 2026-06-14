@@ -8,27 +8,51 @@ use Illuminate\Http\Request;
 
 class ProductoPublicoController extends Controller
 {
-    // Catálogo
+    // Catálogo — lee productos reales de la base de datos
     public function index(Request $request)
     {
         $query = Product::with('category', 'images')
                         ->where('is_active', true)
                         ->whereNull('deleted_at');
 
-        if ($request->categoria) {
-            $query->whereHas('category', fn($q) => $q->where('slug', $request->categoria));
+        // Filtro por categoría (slug)
+        if ($request->filled('categoria')) {
+            $query->whereHas('category', fn($q) =>
+                $q->where('slug', $request->categoria)
+            );
         }
-        if ($request->buscar) {
-            $query->where('name', 'like', '%'.$request->buscar.'%');
+
+        // Filtro por búsqueda
+        if ($request->filled('buscar')) {
+            $query->where('name', 'like', '%' . $request->buscar . '%');
         }
-        if ($request->orden === 'precio_asc')  $query->orderBy('price');
-        if ($request->orden === 'precio_desc') $query->orderByDesc('price');
-        if ($request->orden === 'nuevo')       $query->latest();
 
-        $productos  = $query->paginate(12)->withQueryString();
-        $categorias = Category::where('is_active', true)->whereNull('parent_id')->with('children')->get();
+        // Filtro por precio máximo
+        if ($request->filled('precio_max')) {
+            $query->where(function($q) use ($request) {
+                $q->where('sale_price', '<=', $request->precio_max)
+                  ->orWhere(function($q2) use ($request) {
+                      $q2->whereNull('sale_price')
+                         ->where('price', '<=', $request->precio_max);
+                  });
+            });
+        }
 
-        return view('shop.catalogo', compact('productos', 'categorias'));
+        // Ordenamiento
+        match($request->orden) {
+            'precio_asc'  => $query->orderByRaw('COALESCE(sale_price, price) ASC'),
+            'precio_desc' => $query->orderByRaw('COALESCE(sale_price, price) DESC'),
+            'nuevo'       => $query->latest(),
+            default       => $query->orderBy('featured', 'desc')->latest(),
+        };
+
+        $productos  = $query->paginate(20)->withQueryString();
+        $categorias = Category::where('is_active', true)
+                              ->whereNull('parent_id')
+                              ->orderBy('sort_order')
+                              ->get();
+
+        return view('Catalogos-de-productos', compact('productos', 'categorias'));
     }
 
     // Detalle de producto
@@ -37,13 +61,14 @@ class ProductoPublicoController extends Controller
         $producto = Product::with('category', 'images', 'reviews.user')
                            ->where('slug', $slug)
                            ->where('is_active', true)
+                           ->whereNull('deleted_at')
                            ->firstOrFail();
 
-        // Productos relacionados de la misma categoría
         $relacionados = Product::with('images')
                                ->where('category_id', $producto->category_id)
                                ->where('id', '!=', $producto->id)
                                ->where('is_active', true)
+                               ->whereNull('deleted_at')
                                ->take(4)->get();
 
         return view('shop.producto', compact('producto', 'relacionados'));

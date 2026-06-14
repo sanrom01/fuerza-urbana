@@ -4,138 +4,157 @@
 @section('content')
 <div class="container py-5">
 
-    {{-- BREADCRUMB --}}
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-danger">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="/Catalogos-de-productos" class="text-decoration-none text-danger">Productos</a></li>
+            <li class="breadcrumb-item"><a href="/" class="text-danger text-decoration-none">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="/Catalogos-de-productos" class="text-danger text-decoration-none">Catálogo</a></li>
+            <li class="breadcrumb-item">
+                <a href="/Catalogos-de-productos?categoria={{ $producto->category->slug }}"
+                   class="text-danger text-decoration-none">{{ $producto->category->name }}</a>
+            </li>
             <li class="breadcrumb-item active text-white">{{ $producto->name }}</li>
         </ol>
     </nav>
 
     <div class="row g-5">
 
-        {{-- GALERÍA --}}
+        {{-- IMAGEN --}}
         <div class="col-lg-6">
-            <div class="rounded-3 overflow-hidden bg-dark border border-secondary" style="height:420px">
+            <div class="rounded-3 overflow-hidden" style="height:420px;background:#111">
                 <img id="imgPrincipal"
-                     src="{{ $producto->images->where('is_main',true)->first()?->url ?? 'https://picsum.photos/seed/'.$producto->id.'/600/600' }}"
+                     src="{{ $producto->images->where('is_main',true)->first()?->url }}"
                      alt="{{ $producto->name }}"
-                     class="w-100 h-100" style="object-fit:cover">
+                     class="w-100 h-100" style="object-fit:cover"
+                     onerror="this.src='https://picsum.photos/seed/{{ $producto->id }}/600/600'">
             </div>
-            @if($producto->images->count() > 1)
-            <div class="d-flex gap-2 mt-3">
-                @foreach($producto->images as $img)
-                <img src="{{ $img->url }}" alt=""
-                     onclick="document.getElementById('imgPrincipal').src=this.src"
-                     class="rounded-2 border border-secondary"
-                     style="width:68px;height:68px;object-fit:cover;cursor:pointer">
-                @endforeach
-            </div>
-            @endif
         </div>
 
         {{-- INFO --}}
         <div class="col-lg-6 text-white">
-            <span class="badge bg-danger mb-2">{{ $producto->category->name }}</span>
+            <span class="badge bg-danger mb-2 text-uppercase">{{ $producto->category->name }}</span>
             <h1 class="fw-bold fs-2 mb-3">{{ $producto->name }}</h1>
 
-            {{-- PRECIO --}}
-            <div class="mb-4">
+            <div class="mb-3">
                 @if($producto->sale_price)
-                    <span class="fs-1 fw-bold text-danger">
-                        ${{ number_format($producto->sale_price, 0, ',', '.') }}
-                    </span>
-                    <span class="text-muted text-decoration-line-through ms-2 fs-5">
-                        ${{ number_format($producto->price, 0, ',', '.') }}
-                    </span>
-                    <span class="badge bg-danger ms-2">
-                        -{{ round((1 - $producto->sale_price / $producto->price) * 100) }}% OFF
-                    </span>
+                    <span class="fs-1 fw-bold text-danger">${{ number_format($producto->sale_price,0,',','.') }}</span>
+                    <span class="text-muted text-decoration-line-through ms-2 fs-5">${{ number_format($producto->price,0,',','.') }}</span>
                 @else
-                    <span class="fs-1 fw-bold">
-                        ${{ number_format($producto->price, 0, ',', '.') }}
-                    </span>
+                    <span class="fs-1 fw-bold">${{ number_format($producto->price,0,',','.') }}</span>
                 @endif
+                <div class="text-muted small mt-1">
+                    6 cuotas de ${{ number_format(($producto->sale_price ?? $producto->price)/6,0,',','.') }} sin interés
+                </div>
             </div>
 
-            {{-- STOCK --}}
             @if($producto->stock > 0)
-                <p class="text-success mb-3">
-                    <i class="bi bi-check-circle-fill me-1"></i>
-                    En stock ({{ $producto->stock }} disponibles)
-                </p>
+                <p class="text-success mb-3"><i class="bi bi-check-circle-fill me-1"></i>En stock — ¡Llevalo hoy!</p>
             @else
-                <p class="text-danger mb-3">
-                    <i class="bi bi-x-circle-fill me-1"></i>Sin stock disponible
-                </p>
+                <p class="text-danger mb-3"><i class="bi bi-x-circle-fill me-1"></i>Sin stock</p>
             @endif
 
-            {{-- DESCRIPCIÓN --}}
-            <p class="text-secondary lh-lg mb-4">{{ $producto->description }}</p>
-
-            @if($producto->sku)
-            <p class="text-muted small mb-4">SKU: {{ $producto->sku }}</p>
+            @if($producto->description)
+            <p class="text-secondary mb-3">{{ $producto->description }}</p>
             @endif
 
-            {{-- AGREGAR AL CARRITO --}}
             @if($producto->stock > 0)
-            <div class="d-flex align-items-center gap-3 mb-4">
-                <div class="input-group" style="width:130px">
-                    <button class="btn btn-outline-secondary" type="button"
-                            onclick="let i=document.getElementById('qty');if(i.value>1)i.value--">
-                        <i class="bi bi-dash"></i>
+
+            {{-- ── TALLE ── --}}
+            <div class="mb-4">
+                <p class="small fw-bold text-uppercase mb-2">
+                    TALLE <span id="talleTexto" class="text-danger fw-bold"></span>
+                </p>
+                <div id="contenedorTalles" style="display:flex;gap:10px;flex-wrap:wrap">
+                    @foreach(['XS','S','M','L','XL','XXL'] as $t)
+                    <div id="talle-{{ $t }}"
+                         style="
+                            padding:10px 18px;
+                            border:2px solid #555;
+                            border-radius:8px;
+                            color:#fff;
+                            font-weight:700;
+                            font-size:14px;
+                            cursor:pointer;
+                            user-select:none;
+                            transition:all .15s;
+                         "
+                         onmouseover="if(talleElegido!='{{ $t }}')this.style.borderColor='#dc3545'"
+                         onmouseout="if(talleElegido!='{{ $t }}')this.style.borderColor='#555'"
+                         onclick="elegirTalle('{{ $t }}')">
+                        {{ $t }}
+                    </div>
+                    @endforeach
+                </div>
+                <small id="avisoTalle" style="color:#dc3545;display:none;margin-top:6px;display:none">
+                    ⚠ Seleccioná un talle antes de continuar.
+                </small>
+            </div>
+
+            {{-- ── CANTIDAD ── --}}
+            <div class="mb-4">
+                <p class="small fw-bold text-uppercase mb-2">CANTIDAD</p>
+                <div style="display:flex;align-items:center;gap:12px">
+                    <button type="button"
+                            style="background:#222;border:1px solid #555;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:18px"
+                            onclick="if(cantidadActual>1){cantidadActual--;document.getElementById('cantidadMostrar').textContent=cantidadActual}">
+                        −
                     </button>
-                    <input type="number" id="qty" value="1" min="1"
-                           max="{{ $producto->stock }}"
-                           class="form-control text-center bg-black text-white border-secondary">
-                    <button class="btn btn-outline-secondary" type="button"
-                            onclick="let i=document.getElementById('qty');if(i.value<{{ $producto->stock }})i.value++">
-                        <i class="bi bi-plus"></i>
+                    <span id="cantidadMostrar" style="font-size:20px;font-weight:700;min-width:30px;text-align:center">1</span>
+                    <button type="button"
+                            style="background:#222;border:1px solid #555;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:18px"
+                            onclick="if(cantidadActual<{{ $producto->stock }}){cantidadActual++;document.getElementById('cantidadMostrar').textContent=cantidadActual}">
+                        +
                     </button>
                 </div>
-                <button onclick="agregarAlCarrito({{ $producto->id }})"
-                        class="btn btn-danger btn-lg flex-grow-1 fw-bold">
-                    <i class="bi bi-cart-plus me-2"></i>AGREGAR AL CARRITO
-                </button>
             </div>
+
+            {{-- ── BOTÓN ── --}}
+            @auth
+            <button type="button" id="btnAgregar"
+                    style="
+                        background:#dc3545;
+                        border:none;
+                        color:#fff;
+                        font-weight:700;
+                        font-size:16px;
+                        padding:16px;
+                        width:100%;
+                        border-radius:50px;
+                        letter-spacing:1px;
+                        cursor:pointer;
+                        margin-bottom:20px;
+                        transition:.2s;
+                    "
+                    onmouseover="this.style.background='#b02a37'"
+                    onmouseout="this.style.background='#dc3545'"
+                    onclick="agregarAlCarrito({{ $producto->id }})">
+                🛒 AGREGAR AL CARRITO
+            </button>
+            @else
+            <a href="/Login"
+               style="display:block;background:#dc3545;color:#fff;font-weight:700;font-size:16px;padding:16px;width:100%;border-radius:50px;letter-spacing:1px;text-align:center;text-decoration:none;margin-bottom:20px">
+                👤 INICIÁ SESIÓN PARA COMPRAR
+            </a>
+            @endauth
+
             @endif
 
-            {{-- INFO EXTRA --}}
-            <div class="d-flex gap-3 text-secondary small">
-                <span><i class="bi bi-truck me-1"></i>Envío a todo el país</span>
-                <span><i class="bi bi-shield-check me-1"></i>Compra segura</span>
-                <span><i class="bi bi-arrow-repeat me-1"></i>30 días de cambio</span>
-            </div>
-        </div>
-    </div>
-
-    {{-- RESEÑAS --}}
-    @if($producto->reviews->where('is_approved', true)->count())
-    <div class="mt-5 pt-4 border-top border-secondary">
-        <h4 class="fw-bold text-white mb-4">Opiniones de clientes</h4>
-        <div class="row g-3">
-            @foreach($producto->reviews->where('is_approved', true) as $review)
-            <div class="col-md-6">
-                <div class="card bg-dark border-secondary p-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-bold text-white">{{ $review->user->name }}</span>
-                        <span>
-                            @for($i=1;$i<=5;$i++)
-                            <i class="bi bi-star{{ $i <= $review->rating ? '-fill text-warning' : ' text-secondary' }}"></i>
-                            @endfor
-                        </span>
-                    </div>
-                    @if($review->title)
-                    <div class="fw-500 text-white mb-1">{{ $review->title }}</div>
-                    @endif
-                    <p class="text-secondary small mb-0">{{ $review->comment }}</p>
+            {{-- BENEFICIOS --}}
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <div style="flex:1;min-width:100px;background:#111;padding:12px;border-radius:10px;text-align:center">
+                    <div style="font-size:20px">🚚</div>
+                    <small style="color:#888;font-size:11px">Envío a todo el país</small>
+                </div>
+                <div style="flex:1;min-width:100px;background:#111;padding:12px;border-radius:10px;text-align:center">
+                    <div style="font-size:20px">🔒</div>
+                    <small style="color:#888;font-size:11px">Compra segura</small>
+                </div>
+                <div style="flex:1;min-width:100px;background:#111;padding:12px;border-radius:10px;text-align:center">
+                    <div style="font-size:20px">🔄</div>
+                    <small style="color:#888;font-size:11px">30 días de cambio</small>
                 </div>
             </div>
-            @endforeach
         </div>
     </div>
-    @endif
 
     {{-- RELACIONADOS --}}
     @if($relacionados->count())
@@ -146,13 +165,12 @@
             <div class="col-6 col-md-3">
                 <a href="{{ route('productos.show', $rel->slug) }}" class="text-decoration-none">
                     <div class="card bg-dark border-secondary h-100">
-                        <img src="{{ $rel->images->where('is_main',true)->first()?->url ?? 'https://picsum.photos/seed/'.$rel->id.'/300/300' }}"
-                             class="card-img-top" style="height:180px;object-fit:cover">
+                        <img src="{{ $rel->images->where('is_main',true)->first()?->url }}"
+                             class="card-img-top" style="height:180px;object-fit:cover"
+                             onerror="this.src='https://picsum.photos/seed/{{ $rel->id }}/300/300'">
                         <div class="card-body p-2">
-                            <p class="text-white small fw-500 mb-1">{{ $rel->name }}</p>
-                            <p class="text-danger fw-bold mb-0">
-                                ${{ number_format($rel->sale_price ?? $rel->price, 0, ',', '.') }}
-                            </p>
+                            <p class="text-white small fw-bold mb-1">{{ $rel->name }}</p>
+                            <p class="text-danger fw-bold mb-0">${{ number_format($rel->sale_price ?? $rel->price,0,',','.') }}</p>
                         </div>
                     </div>
                 </a>
@@ -161,56 +179,111 @@
         </div>
     </div>
     @endif
-
 </div>
 
-{{-- MODAL: Producto agregado al carrito --}}
-<div class="modal fade" id="modalCarrito" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content bg-dark border-secondary text-white">
-            <div class="modal-body text-center p-4">
-                <i class="bi bi-cart-check-fill text-success fs-1 mb-3 d-block"></i>
-                <h5 class="fw-bold mb-1">¡Producto agregado!</h5>
-                <p class="text-secondary mb-4">{{ $producto->name }} está en tu carrito.</p>
-                <div class="d-flex gap-3 justify-content-center">
-                    <button class="btn btn-outline-light" data-bs-dismiss="modal">
-                        <i class="bi bi-arrow-left me-1"></i>Seguir comprando
-                    </button>
-                    <a href="{{ route('carrito.index') }}" class="btn btn-danger fw-bold">
-                        <i class="bi bi-cart3 me-1"></i>Finalizar compra
-                    </a>
-                </div>
-            </div>
+{{-- MODAL --}}
+<div id="modalCarrito" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center">
+    <div style="background:#1a1a1a;border:1px solid #444;border-radius:16px;padding:40px;max-width:440px;width:90%;text-align:center;color:#fff">
+        <div style="font-size:56px;margin-bottom:12px">✅</div>
+        <h4 style="font-weight:700;margin-bottom:4px">¡Producto agregado!</h4>
+        <p style="color:#888;margin-bottom:4px">{{ $producto->name }}</p>
+        <p style="color:#aaa;font-size:13px;margin-bottom:24px">
+            Talle: <strong id="modalTalleTexto" style="color:#fff"></strong>
+        </p>
+        <hr style="border-color:#333;margin-bottom:24px">
+        <p style="font-weight:700;margin-bottom:16px">¿Qué querés hacer?</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <a href="/Catalogos-de-productos"
+               style="background:transparent;border:2px solid #fff;color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none">
+                ← Seguir comprando
+            </a>
+            <a href="{{ route('checkout.index') }}"
+               style="background:#dc3545;border:none;color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none">
+                🔒 Finalizar compra
+            </a>
         </div>
     </div>
 </div>
-@endsection
 
-@push('scripts')
 <script>
-function agregarAlCarrito(productoId) {
-    const cantidad = document.getElementById('qty').value;
+var talleElegido   = null;
+var cantidadActual = 1;
 
-    fetch(`/productos/${productoId}/carrito`, {
+function elegirTalle(talle) {
+    // Resetear todos
+    ['XS','S','M','L','XL','XXL'].forEach(function(t) {
+        var el = document.getElementById('talle-' + t);
+        if (el) {
+            el.style.borderColor = '#555';
+            el.style.background  = 'transparent';
+        }
+    });
+    // Marcar seleccionado
+    var sel = document.getElementById('talle-' + talle);
+    if (sel) {
+        sel.style.borderColor = '#dc3545';
+        sel.style.background  = '#dc3545';
+    }
+    talleElegido = talle;
+    document.getElementById('talleTexto').textContent = '— ' + talle;
+    document.getElementById('avisoTalle').style.display = 'none';
+}
+
+function agregarAlCarrito(productoId) {
+    if (!talleElegido) {
+        var aviso = document.getElementById('avisoTalle');
+        aviso.style.display = 'block';
+        document.getElementById('contenedorTalles').scrollIntoView({ behavior:'smooth', block:'center' });
+        return;
+    }
+
+    var btn = document.getElementById('btnAgregar');
+    btn.disabled = true;
+    btn.textContent = 'Agregando...';
+
+    var csrf = document.querySelector('meta[name="csrf-token"]');
+    if (!csrf) {
+        alert('Error de configuración: falta el meta csrf-token en el layout.');
+        btn.disabled = false;
+        btn.textContent = '🛒 AGREGAR AL CARRITO';
+        return;
+    }
+
+    fetch('/productos/' + productoId + '/carrito', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'X-CSRF-TOKEN': csrf.content
         },
-        body: JSON.stringify({ cantidad: cantidad }),
+        body: JSON.stringify({
+            cantidad: cantidadActual,
+            talle:    talleElegido
+        })
     })
-    .then(res => res.json())
-    .then(data => {
-        // Actualizar badge del carrito en navbar
-        const badge = document.querySelector('.cart-badge-count');
-        if (badge) badge.textContent = data.cantidad;
-
-        // Mostrar modal
-        new bootstrap.Modal(document.getElementById('modalCarrito')).show();
+    .then(function(res) {
+        if (!res.ok) {
+            return res.text().then(function(txt) {
+                throw new Error('Error ' + res.status + ': ' + txt.substring(0, 200));
+            });
+        }
+        return res.json();
     })
-    .catch(() => {
-        window.location.href = '/Login';
+    .then(function(data) {
+        btn.disabled = false;
+        btn.textContent = '🛒 AGREGAR AL CARRITO';
+        document.getElementById('modalTalleTexto').textContent = talleElegido;
+        document.getElementById('modalCarrito').style.display = 'flex';
+    })
+    .catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = '🛒 AGREGAR AL CARRITO';
+        alert('Error al agregar: ' + err.message);
     });
 }
+
+// Cerrar modal al hacer click fuera
+document.getElementById('modalCarrito').addEventListener('click', function(e) {
+    if (e.target === this) this.style.display = 'none';
+});
 </script>
-@endpush
+@endsection
