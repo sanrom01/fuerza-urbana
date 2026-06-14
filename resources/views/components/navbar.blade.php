@@ -46,8 +46,7 @@
                             <a class="nav-link" href="/Informacion-de-contacto">Contacto</a>
                             <a class="nav-link" href="/Terminos-y-usos">Términos</a>
                             <a class="nav-link" href="/Catalogos-de-productos">Catálogo</a>
-                            <a class="nav-link" href="/Carrito">Carrito</a>
-                            <a class="nav-link" href="/Mis-compras">Mis Compras</a>
+                      
                         @endif
 
 

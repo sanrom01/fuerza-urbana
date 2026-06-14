@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ProductoPublicoController;
+use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\CheckoutController;
 
 // ── RUTAS PÚBLICAS ─────────────────────────────────────────────
 Route::get('/',                    fn() => view('Principal'));
@@ -11,6 +14,9 @@ Route::get('/Comercializacion',    fn() => view('Comercializacion'));
 Route::get('/Informacion-de-contacto', fn() => view('Informacion-de-contacto'));
 Route::get('/Terminos-y-usos',     fn() => view('Terminos-y-usos'));
 Route::get('/Catalogos-de-productos', fn() => view('Catalogos-de-productos'));
+Route::get('/productos/{slug}', [ProductoPublicoController::class, 'show'])
+     ->name('productos.show');
+Route::get('/Carrito', [CarritoController::class, 'index'])->name('carrito.index');
 
 // ── AUTENTICACIÓN MANUAL ───────────────────────────────────────
 Route::get('/Login',    [AuthController::class, 'showLogin'])->name('login');
@@ -29,6 +35,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/Mis-compras', fn() => view('mis-compras'))->name('cliente.ordenes');
 
     Route::get('/profile/edit', fn() => view('profile.edit'))->name('profile.edit');
+
+    Route::post('/productos/{id}/carrito',        [CarritoController::class, 'agregar'])->name('carrito.agregar');
+    Route::patch('/carrito/{id}',                 [CarritoController::class, 'actualizar'])->name('carrito.actualizar');
+    Route::delete('/carrito/{id}',                [CarritoController::class, 'eliminar'])->name('carrito.eliminar');
+    Route::delete('/carrito',                     [CarritoController::class, 'vaciar'])->name('carrito.vaciar');
+ 
+    // ── CHECKOUT ───────────────────────────────────────────────────────────
+    Route::get('/checkout',                       [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout',                      [CheckoutController::class, 'procesar'])->name('checkout.procesar');
+    Route::get('/checkout/comprobante/{orderId}', [CheckoutController::class, 'comprobante'])->name('checkout.comprobante');
 
 });
 
