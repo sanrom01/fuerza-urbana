@@ -46,4 +46,26 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    // Relación con talles y su stock
+    public function talles()
+    {
+        return $this->hasMany(ProductTalle::class);
+    }
+
+    // Stock de un talle específico
+    public function stockTalle(string $talle): int
+    {
+        return $this->talles->where('talle', $talle)->first()?->stock ?? 0;
+    }
+
+    // Stock total del producto (suma de todos los talles)
+    // Si no tiene talles definidos usa el stock general
+    public function stockTotal(): int
+    {
+        if ($this->talles->isEmpty()) {
+            return $this->stock;
+        }
+        return $this->talles->sum('stock');
+    }
 }

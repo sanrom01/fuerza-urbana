@@ -8,26 +8,20 @@ use Illuminate\Http\Request;
 
 class ProductoPublicoController extends Controller
 {
-    // Catálogo — lee productos reales de la base de datos
     public function index(Request $request)
     {
         $query = Product::with('category', 'images')
                         ->where('is_active', true)
                         ->whereNull('deleted_at');
 
-        // Filtro por categoría (slug)
         if ($request->filled('categoria')) {
             $query->whereHas('category', fn($q) =>
                 $q->where('slug', $request->categoria)
             );
         }
-
-        // Filtro por búsqueda
         if ($request->filled('buscar')) {
             $query->where('name', 'like', '%' . $request->buscar . '%');
         }
-
-        // Filtro por precio máximo
         if ($request->filled('precio_max')) {
             $query->where(function($q) use ($request) {
                 $q->where('sale_price', '<=', $request->precio_max)
@@ -38,7 +32,6 @@ class ProductoPublicoController extends Controller
             });
         }
 
-        // Ordenamiento
         match($request->orden) {
             'precio_asc'  => $query->orderByRaw('COALESCE(sale_price, price) ASC'),
             'precio_desc' => $query->orderByRaw('COALESCE(sale_price, price) DESC'),
@@ -55,10 +48,10 @@ class ProductoPublicoController extends Controller
         return view('Catalogos-de-productos', compact('productos', 'categorias'));
     }
 
-    // Detalle de producto
     public function show($slug)
     {
-        $producto = Product::with('category', 'images', 'reviews.user')
+        // Cargar talles junto con el producto
+        $producto = Product::with('category', 'images', 'reviews.user', 'talles')
                            ->where('slug', $slug)
                            ->where('is_active', true)
                            ->whereNull('deleted_at')
@@ -71,6 +64,6 @@ class ProductoPublicoController extends Controller
                                ->whereNull('deleted_at')
                                ->take(4)->get();
 
-        return view('shop.producto', compact('producto', 'relacionados'));
+        return view('Shop.producto', compact('producto', 'relacionados'));
     }
 }

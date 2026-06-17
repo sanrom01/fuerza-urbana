@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Order, OrderItem, Payment, Address, Factura};
+use App\Models\{Order, OrderItem, Payment, Address, Factura, Product, ProductTalle};
+use App\Models\CarritoItem;
 use App\Mail\ComprobantePedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,10 +13,10 @@ use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
-    // Mostrar formulario de checkout
     public function index()
     {
-        $carrito = session('carrito', []);
+        $carrito = $this->obtenerCarrito();
+
         if (empty($carrito)) {
             return redirect()->route('carrito.index')
                              ->with('error', 'Tu carrito está vacío.');
@@ -27,10 +28,10 @@ class CheckoutController extends Controller
         return view('checkout.index', compact('carrito', 'subtotal', 'direcciones'));
     }
 
-    // Procesar la compra
     public function procesar(Request $request)
     {
-        $carrito = session('carrito', []);
+        $carrito = $this->obtenerCarrito();
+
         if (empty($carrito)) {
             return redirect()->route('carrito.index');
         }
@@ -58,8 +59,60 @@ class CheckoutController extends Controller
             'cvv.required'           => 'El código de seguridad es obligatorio.',
         ]);
 
+        // ── VERIFICACIÓN DE STOCK ──────────────────────────────
+        // Se hace DENTRO de una transacción con bloqueo (FOR UPDATE)
+        // para evitar que dos compras simultáneas pasen al mismo tiempo
         DB::beginTransaction();
+
         try {
+            $erroresStock = [];
+
+            foreach ($carrito as $item) {
+                $productoId = $item['producto_id'];
+                $cantidad   = $item['cantidad'];
+                $talle      = $item['talle'] ?? 'Único';
+
+                // lockForUpdate() bloquea la fila hasta que termine la transacción
+                $producto = Product::lockForUpdate()->find($productoId);
+
+                if (!$producto) {
+                    $erroresStock[] = "El producto \"{$item['nombre']}\" ya no está disponible.";
+                    continue;
+                }
+
+                if (!$producto->is_active) {
+                    $erroresStock[] = "El producto \"{$producto->name}\" ya no está disponible.";
+                    continue;
+                }
+
+                // Verificar stock del talle específico
+                $talleDB = ProductTalle::where('product_id', $productoId)
+                                       ->where('talle', $talle)
+                                       ->lockForUpdate()
+                                       ->first();
+
+                // Si tiene talles configurados usar stock por talle, sino usar stock general
+                $stockDisponible = $talleDB ? $talleDB->stock : $producto->stock;
+
+                if ($stockDisponible < $cantidad) {
+                    if ($stockDisponible === 0) {
+                        $erroresStock[] = "El talle {$talle} de \"{$producto->name}\" se quedó sin stock.";
+                    } else {
+                        $erroresStock[] = "Solo quedan {$stockDisponible} unidades de \"{$producto->name}\" en talle {$talle} (solicitaste {$cantidad}).";
+                    }
+                }
+            }
+
+            // Si hay errores de stock, cancelar y mostrarlos al usuario
+            if (!empty($erroresStock)) {
+                DB::rollBack();
+                return back()
+                    ->with('error_stock', $erroresStock)
+                    ->withInput();
+            }
+
+            // ── TODO OK — PROCESAR LA COMPRA ──────────────────
+
             // 1. Guardar dirección
             $address = Address::create([
                 'user_id'     => Auth::id(),
@@ -87,9 +140,9 @@ class CheckoutController extends Controller
                 'total'         => $total,
             ]);
 
-            // 4. Crear items
-            foreach ($carrito as $key => $item) {
-                $productoId     = $item['producto_id'] ?? explode('_', $key)[0];
+            // 4. Crear items Y descontar stock
+            foreach ($carrito as $item) {
+                $productoId     = $item['producto_id'];
                 $talle          = $item['talle'] ?? 'Único';
                 $nombreCompleto = $item['nombre'] . ' (Talle ' . $talle . ')';
 
@@ -101,10 +154,19 @@ class CheckoutController extends Controller
                     'quantity'     => $item['cantidad'],
                     'subtotal'     => $item['precio'] * $item['cantidad'],
                 ]);
+
+                // Descontar stock general del producto
+                Product::where('id', $productoId)
+                       ->decrement('stock', $item['cantidad']);
+
+                // Descontar stock del talle específico si existe
+                ProductTalle::where('product_id', $productoId)
+                            ->where('talle', $talle)
+                            ->decrement('stock', $item['cantidad']);
             }
 
             // 5. Registrar pago
-            $metodo = in_array($request->tipo_tarjeta, ['visa','mastercard','amex'])
+            $metodo = in_array($request->tipo_tarjeta, ['visa', 'mastercard', 'amex'])
                       ? 'tarjeta_credito' : 'tarjeta_debito';
 
             Payment::create([
@@ -127,12 +189,13 @@ class CheckoutController extends Controller
                 'estado'    => 'emitida',
             ]);
 
-            // 7. Limpiar carrito
+            // 7. Limpiar carrito (BD y sesión)
+            CarritoItem::where('user_id', Auth::id())->delete();
             session()->forget('carrito');
 
             DB::commit();
 
-            // 8. Enviar email (sin romper el proceso si falla)
+            // 8. Enviar email
             try {
                 Mail::to(Auth::user()->email)
                     ->send(new ComprobantePedido(
@@ -143,7 +206,6 @@ class CheckoutController extends Controller
                 Log::error('Error enviando comprobante: ' . $e->getMessage());
             }
 
-            // 9. Redirigir al comprobante
             return redirect()->route('checkout.comprobante', $order->id);
 
         } catch (\Exception $e) {
@@ -155,7 +217,6 @@ class CheckoutController extends Controller
         }
     }
 
-    // Mostrar comprobante
     public function comprobante($orderId)
     {
         $order = Order::with('items.product', 'payment', 'address', 'factura')
@@ -163,5 +224,27 @@ class CheckoutController extends Controller
                       ->findOrFail($orderId);
 
         return view('checkout.comprobante', compact('order'));
+    }
+
+    // Obtiene el carrito desde BD (logueado) o sesión (invitado)
+    private function obtenerCarrito(): array
+    {
+        if (Auth::check()) {
+            return CarritoItem::where('user_id', Auth::id())
+                              ->get()
+                              ->keyBy(fn($i) => $i->producto_id . '_' . $i->talle)
+                              ->map(fn($i) => [
+                                  'producto_id' => $i->producto_id,
+                                  'nombre'      => $i->nombre,
+                                  'precio'      => (float) $i->precio,
+                                  'cantidad'    => $i->cantidad,
+                                  'talle'       => $i->talle,
+                                  'imagen'      => $i->imagen,
+                                  'sku'         => $i->sku,
+                              ])
+                              ->toArray();
+        }
+
+        return session('carrito', []);
     }
 }

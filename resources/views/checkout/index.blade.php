@@ -9,14 +9,42 @@
         <i class="bi bi-lock-fill text-danger me-2"></i>Finalizar compra
     </h2>
 
-    {{-- ERRORES --}}
-    @if($errors->any())
-    <div class="alert alert-danger rounded-3 mb-4">
-        <ul class="mb-0">
-            @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
-        </ul>
+    {{-- ERRORES --}}   
+{{-- ERRORES DE VALIDACIÓN --}}
+@if($errors->any())
+<div class="alert rounded-3 mb-4" style="background:#2a1a1a;border:1px solid #dc3545">
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <i class="bi bi-exclamation-circle-fill text-danger fs-5"></i>
+        <strong class="text-danger">Corregí los siguientes errores:</strong>
     </div>
-    @endif
+    <ul class="mb-0 text-white small">
+        @foreach($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+ 
+{{-- ERRORES DE STOCK --}}
+@if(session('error_stock'))
+<div class="alert rounded-3 mb-4" style="background:#2a1a0a;border:1px solid #ff9800">
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <i class="bi bi-box-seam text-warning fs-5"></i>
+        <strong class="text-warning">No se pudo completar la compra por falta de stock:</strong>
+    </div>
+    <ul class="mb-0 text-white small">
+        @foreach(session('error_stock') as $err)
+        <li>{{ $err }}</li>
+        @endforeach
+    </ul>
+    <div class="mt-3">
+        <a href="/Carrito" class="btn btn-sm btn-warning rounded-pill px-3 fw-bold">
+            <i class="bi bi-cart3 me-1"></i>Ver mi carrito
+        </a>
+        <small class="text-secondary ms-2">Podés ajustar las cantidades y volver a intentarlo.</small>
+    </div>
+</div>
+@endif
 
     {{-- INDICADOR DE PASOS --}}
     <div class="d-flex align-items-center gap-0 mb-5" id="indicadorPasos">
@@ -257,8 +285,8 @@
 
 @push('scripts')
 <script>
-// ── Si hay errores de validación del servidor, ir directo al paso 2
-@if($errors->any())
+// ── Si hay errores (validación o stock), ir directo al paso 2
+@if($errors->any() || session('error_stock'))
 window.addEventListener('DOMContentLoaded', function() { mostrarPaso2(); });
 @endif
 
@@ -351,6 +379,10 @@ function formatarVencimiento(input) {
 }
 
 document.getElementById('formCheckout').addEventListener('submit', function() {
+    // Limpiar espacios del número de tarjeta antes de enviar
+    var numTarjeta = document.getElementById('num_tarjeta');
+    numTarjeta.value = numTarjeta.value.replace(/\s/g, '');
+
     var btn = document.getElementById('btnComprar');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';

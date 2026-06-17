@@ -108,6 +108,29 @@
             </div>
 
             {{-- ── BOTÓN ── --}}
+            {{-- Mensaje de error de stock --}}
+            <div id="mensajeErrorStock"
+                 style="display:none;align-items:flex-start;gap:12px;
+                         background:#1a0a0a;
+                         border:1px solid #dc3545;
+                         border-left:4px solid #dc3545;
+                         border-radius:12px;
+                         padding:14px 16px;
+                         margin-bottom:16px;
+                         animation:fadeIn .3s ease">
+                <span style="font-size:1.3rem;flex-shrink:0">⚠️</span>
+                <div>
+                    <div style="color:#dc3545;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">
+                        Stock insuficiente
+                    </div>
+                    <div style="color:#fff;font-size:.9rem;line-height:1.4" id="mensajeErrorStockTexto"></div>
+                </div>
+                <button onclick="ocultarErrorStock()"
+                        style="margin-left:auto;background:transparent;border:none;color:#888;font-size:1.2rem;cursor:pointer;flex-shrink:0;line-height:1">
+                    ✕
+                </button>
+            </div>
+
             @auth
             <button type="button" id="btnAgregar"
                     style="
@@ -261,24 +284,56 @@ function agregarAlCarrito(productoId) {
         })
     })
     .then(function(res) {
-        if (!res.ok) {
-            return res.text().then(function(txt) {
-                throw new Error('Error ' + res.status + ': ' + txt.substring(0, 200));
-            });
-        }
-        return res.json();
+        return res.json().then(function(data) {
+            return { status: res.status, data: data };
+        });
     })
-    .then(function(data) {
+    .then(function(result) {
         btn.disabled = false;
         btn.textContent = '🛒 AGREGAR AL CARRITO';
+
+        if (!result.data.ok) {
+            mostrarErrorStock(result.data.error);
+            return;
+        }
+
+        // Ocultar error previo si había
+        ocultarErrorStock();
+
+        // Actualizar badge del carrito en navbar
+        document.querySelectorAll('.position-absolute.badge, .badge.rounded-pill.bg-danger').forEach(function(b) {
+            b.textContent = result.data.cantidad;
+        });
+
         document.getElementById('modalTalleTexto').textContent = talleElegido;
         document.getElementById('modalCarrito').style.display = 'flex';
     })
     .catch(function(err) {
         btn.disabled = false;
         btn.textContent = '🛒 AGREGAR AL CARRITO';
-        alert('Error al agregar: ' + err.message);
+        mostrarErrorStock('Ocurrió un error inesperado. Por favor intentá de nuevo.');
     });
+}
+
+// ── Mostrar/ocultar error de stock ──────────────────────────
+function mostrarErrorStock(mensaje) {
+    var div = document.getElementById('mensajeErrorStock');
+    if (!div) return;
+    // Poner el mensaje en el span de texto, no en el div contenedor
+    document.getElementById('mensajeErrorStockTexto').textContent = mensaje;
+    div.style.display = 'flex';
+    div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Auto-ocultar después de 6 segundos
+    clearTimeout(div._timer);
+    div._timer = setTimeout(function() {
+        ocultarErrorStock();
+    }, 6000);
+}
+
+function ocultarErrorStock() {
+    var div = document.getElementById('mensajeErrorStock');
+    if (div) div.style.display = 'none';
 }
 
 // Cerrar modal al hacer click fuera
