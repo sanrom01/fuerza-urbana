@@ -15,9 +15,20 @@ class ProductoPublicoController extends Controller
                         ->whereNull('deleted_at');
 
         if ($request->filled('categoria')) {
-            $query->whereHas('category', fn($q) =>
-                $q->where('slug', $request->categoria)
-            );
+            // Buscar la categoría padre por slug
+            $categoriaPadre = Category::where('slug', $request->categoria)
+                                      ->whereNull('deleted_at')
+                                      ->first();
+
+            if ($categoriaPadre) {
+                // Obtener IDs: la categoría padre + todas sus subcategorías
+                $ids = Category::where('id', $categoriaPadre->id)
+                               ->orWhere('parent_id', $categoriaPadre->id)
+                               ->whereNull('deleted_at')
+                               ->pluck('id');
+
+                $query->whereIn('category_id', $ids);
+            }
         }
         if ($request->filled('buscar')) {
             $query->where('name', 'like', '%' . $request->buscar . '%');

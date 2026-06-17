@@ -52,12 +52,12 @@ class UsuarioController extends Controller
             return back()->with('error', 'No podés desactivar tu propia cuenta.');
         }
         $usuario->delete(); // SoftDelete
-        return back()->with('success', 'Usuario desactivado.');
+        return redirect()->route('admin.usuarios.index')->with('success', 'Usuario desactivado correctamente.');
     }
 
     public function restore($id)
     {
         User::withTrashed()->findOrFail($id)->restore();
-        return back()->with('success', 'Usuario restaurado.');
+        return redirect()->route('admin.usuarios.index')->with('success', 'Usuario restaurado correctamente.');
     }
 }

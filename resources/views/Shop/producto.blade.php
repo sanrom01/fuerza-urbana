@@ -56,7 +56,17 @@
             <p class="text-secondary mb-3">{{ $producto->description }}</p>
             @endif
 
-            @if($producto->stock > 0)
+            @php
+                // Talles con stock > 0 ordenados correctamente
+                $ordenTalles   = ['XS','S','M','L','XL','XXL'];
+                $tallesConStock = $producto->talles
+                    ->where('stock', '>', 0)
+                    ->sortBy(fn($t) => array_search($t->talle, $ordenTalles));
+                $usarTallesBD  = $tallesConStock->isNotEmpty();
+                $hayStock      = $usarTallesBD || $producto->stock > 0;
+            @endphp
+
+            @if($hayStock)
 
             {{-- ── TALLE ── --}}
             <div class="mb-4">
@@ -64,44 +74,60 @@
                     TALLE <span id="talleTexto" class="text-danger fw-bold"></span>
                 </p>
                 <div id="contenedorTalles" style="display:flex;gap:10px;flex-wrap:wrap">
-                    @foreach(['XS','S','M','L','XL','XXL'] as $t)
-                    <div id="talle-{{ $t }}"
-                         style="
-                            padding:10px 18px;
-                            border:2px solid #555;
-                            border-radius:8px;
-                            color:#fff;
-                            font-weight:700;
-                            font-size:14px;
-                            cursor:pointer;
-                            user-select:none;
-                            transition:all .15s;
-                         "
-                         onmouseover="if(talleElegido!='{{ $t }}')this.style.borderColor='#dc3545'"
-                         onmouseout="if(talleElegido!='{{ $t }}')this.style.borderColor='#555'"
-                         onclick="elegirTalle('{{ $t }}')">
-                        {{ $t }}
-                    </div>
-                    @endforeach
+
+                    @if($usarTallesBD)
+                        {{-- Mostrar solo talles con stock desde BD --}}
+                        @foreach($tallesConStock as $talleItem)
+                        <div id="talle-{{ $talleItem->talle }}"
+                             data-stock="{{ $talleItem->stock }}"
+                             style="padding:10px 18px;border:2px solid #555;border-radius:8px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;user-select:none;transition:all .15s;text-align:center"
+                             onmouseover="if(talleElegido!='{{ $talleItem->talle }}')this.style.borderColor='#dc3545'"
+                             onmouseout="if(talleElegido!='{{ $talleItem->talle }}')this.style.borderColor='#555'"
+                             onclick="elegirTalle('{{ $talleItem->talle }}', {{ $talleItem->stock }})">
+                            {{ $talleItem->talle }}
+                            @if($talleItem->stock <= 3)
+                            <span style="display:block;font-size:.6rem;color:#ffc107;font-weight:600;margin-top:2px">
+                                ¡Últimas {{ $talleItem->stock }}!
+                            </span>
+                            @endif
+                        </div>
+                        @endforeach
+                    @else
+                        {{-- Producto sin talles configurados: mostrar todos --}}
+                        @foreach(['XS','S','M','L','XL','XXL'] as $t)
+                        <div id="talle-{{ $t }}"
+                             data-stock="{{ $producto->stock }}"
+                             style="padding:10px 18px;border:2px solid #555;border-radius:8px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;user-select:none;transition:all .15s"
+                             onmouseover="if(talleElegido!='{{ $t }}')this.style.borderColor='#dc3545'"
+                             onmouseout="if(talleElegido!='{{ $t }}')this.style.borderColor='#555'"
+                             onclick="elegirTalle('{{ $t }}', {{ $producto->stock }})">
+                            {{ $t }}
+                        </div>
+                        @endforeach
+                    @endif
+
                 </div>
-                <small id="avisoTalle" style="color:#dc3545;display:none;margin-top:6px;display:none">
+                <small id="avisoTalle" style="color:#dc3545;display:none;margin-top:6px">
                     ⚠ Seleccioná un talle antes de continuar.
                 </small>
             </div>
 
             {{-- ── CANTIDAD ── --}}
             <div class="mb-4">
-                <p class="small fw-bold text-uppercase mb-2">CANTIDAD</p>
+                <p class="small fw-bold text-uppercase mb-2">
+                    CANTIDAD
+                    <span id="stockInfo" style="font-size:.75rem;color:#888;font-weight:400"></span>
+                </p>
                 <div style="display:flex;align-items:center;gap:12px">
                     <button type="button"
                             style="background:#222;border:1px solid #555;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:18px"
-                            onclick="if(cantidadActual>1){cantidadActual--;document.getElementById('cantidadMostrar').textContent=cantidadActual}">
+                            onclick="restarCantidad()">
                         −
                     </button>
                     <span id="cantidadMostrar" style="font-size:20px;font-weight:700;min-width:30px;text-align:center">1</span>
                     <button type="button"
                             style="background:#222;border:1px solid #555;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:18px"
-                            onclick="if(cantidadActual<{{ $producto->stock }}){cantidadActual++;document.getElementById('cantidadMostrar').textContent=cantidadActual}">
+                            onclick="sumarCantidad()">
                         +
                     </button>
                 </div>
@@ -229,33 +255,65 @@
 </div>
 
 <script>
-var talleElegido   = null;
-var cantidadActual = 1;
+var talleElegido     = null;
+var cantidadActual   = 1;
+var stockTalleActual = 0;
 
-function elegirTalle(talle) {
-    // Resetear todos
-    ['XS','S','M','L','XL','XXL'].forEach(function(t) {
-        var el = document.getElementById('talle-' + t);
-        if (el) {
-            el.style.borderColor = '#555';
-            el.style.background  = 'transparent';
-        }
+function elegirTalle(talle, stock) {
+    // Resetar todos los talles
+    document.querySelectorAll('#contenedorTalles > div').forEach(function(el) {
+        el.style.borderColor = '#555';
+        el.style.background  = 'transparent';
     });
-    // Marcar seleccionado
+
+    // Marcar el seleccionado
     var sel = document.getElementById('talle-' + talle);
     if (sel) {
         sel.style.borderColor = '#dc3545';
         sel.style.background  = '#dc3545';
+        stockTalleActual = stock !== undefined ? stock : (parseInt(sel.dataset.stock) || 0);
     }
-    talleElegido = talle;
+
+    talleElegido   = talle;
+    cantidadActual = 1;
+    document.getElementById('cantidadMostrar').textContent = 1;
     document.getElementById('talleTexto').textContent = '— ' + talle;
     document.getElementById('avisoTalle').style.display = 'none';
+    ocultarErrorStock();
+
+    // Mostrar info de stock si quedan pocas unidades
+    var info = document.getElementById('stockInfo');
+    if (info) {
+        if (stockTalleActual <= 5) {
+            info.textContent = '(quedan ' + stockTalleActual + ' en este talle)';
+            info.style.color = stockTalleActual <= 3 ? '#ffc107' : '#888';
+        } else {
+            info.textContent = '';
+        }
+    }
+}
+
+function sumarCantidad() {
+    if (!talleElegido) {
+        document.getElementById('avisoTalle').style.display = 'block';
+        return;
+    }
+    if (cantidadActual < stockTalleActual) {
+        cantidadActual++;
+        document.getElementById('cantidadMostrar').textContent = cantidadActual;
+    }
+}
+
+function restarCantidad() {
+    if (cantidadActual > 1) {
+        cantidadActual--;
+        document.getElementById('cantidadMostrar').textContent = cantidadActual;
+    }
 }
 
 function agregarAlCarrito(productoId) {
     if (!talleElegido) {
-        var aviso = document.getElementById('avisoTalle');
-        aviso.style.display = 'block';
+        document.getElementById('avisoTalle').style.display = 'block';
         document.getElementById('contenedorTalles').scrollIntoView({ behavior:'smooth', block:'center' });
         return;
     }
@@ -263,10 +321,11 @@ function agregarAlCarrito(productoId) {
     var btn = document.getElementById('btnAgregar');
     btn.disabled = true;
     btn.textContent = 'Agregando...';
+    ocultarErrorStock();
 
     var csrf = document.querySelector('meta[name="csrf-token"]');
     if (!csrf) {
-        alert('Error de configuración: falta el meta csrf-token en el layout.');
+        mostrarErrorStock('Error de configuración. Recargá la página e intentá de nuevo.');
         btn.disabled = false;
         btn.textContent = '🛒 AGREGAR AL CARRITO';
         return;

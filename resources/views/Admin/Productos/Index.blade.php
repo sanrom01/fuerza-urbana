@@ -114,7 +114,10 @@
             </tbody>
         </table>
     </div>
-    <div class="px-3 py-2">{{ $productos->links() }}</div>
+    <div class="px-3 py-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <small class="text-muted">Mostrando {{ $productos->firstItem() }} - {{ $productos->lastItem() }} de {{ $productos->total() }} productos</small>
+        {{ $productos->links('pagination::bootstrap-5') }}
+    </div>
 </div>
 
 {{-- CARDS móvil --}}
@@ -167,6 +170,6 @@
     @empty
     <div class="text-center text-muted py-4">No se encontraron productos.</div>
     @endforelse
-    <div class="mt-2">{{ $productos->links() }}</div>
+    <div class="mt-3">{{ $productos->links('pagination::bootstrap-5') }}</div>
 </div>
 @endsection

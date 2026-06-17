@@ -21,11 +21,11 @@ Route::middleware(['auth', 'admin'])
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         // Productos
-        Route::get('productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
+        Route::post('productos/restaurar/{id}', [ProductoController::class, 'restore'])->name('productos.restore');
         Route::resource('productos', ProductoController::class);
 
         // Categorías
-        Route::get('categorias/restaurar/{id}', [CategoriaController::class, 'restore'])->name('categorias.restore');
+        Route::post('categorias/restaurar/{id}', [CategoriaController::class, 'restore'])->name('categorias.restore');
         Route::resource('categorias', CategoriaController::class);
 
         // Usuarios
